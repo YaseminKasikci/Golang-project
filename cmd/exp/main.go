@@ -7,7 +7,8 @@ import (
 
 type User struct {
 	Name string
-	Bio template.HTML
+	Bio  string
+	Age  int
 }
 
 type UserMeta struct {
@@ -23,9 +24,9 @@ func main() {
 
 	user := User{
 		Name: "Suzane Smith",
-		Bio:  `<script>  alert("Haha, you have been h4x0r3d!"); </script> `,
+		Bio:  `<script>alert("Haha, you have been h4x0r3d!");</script>`,
+		Age:  123,
 	}
-
 
 	err = t.Execute(os.Stdout, user)
 	if err != nil {
