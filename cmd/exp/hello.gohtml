@@ -1,21 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Welcome</title>
-</head>
-<body>
+
     <h1>Welcome to my awesome site!</h1>
     <p>Bio: {{.Bio}}</p>
+    <p>Name: {{.Name}}</p>
+    <p>Age: {{.Bio}}, </p>
+    <p>higth:  {{.Higth}} </p>
+    <p>country visited: {{.Country}} </p>
+    <p>like : {{.Like}},</p>
+    <p>notes:{{.Notes}} </p>
+
+
 
     <script>
         const user = {
             name: {{.Name}},
             age: {{.Age}},
-            bio: {{.Bio}}
-
+            bio: {{.Bio}},
+            higth: {{.Higth}},
+            country: {{.Country}},
+            like: {{.Like}},
+            notes: {{.Notes}},
         };
         console.log(user);
     </script>
-</body>
-</html>
+
