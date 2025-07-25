@@ -3,5 +3,5 @@ lecon.js
 notes/
 
 # Ignorer les fichiers temporaires
-*.log
+
 *.tmp
