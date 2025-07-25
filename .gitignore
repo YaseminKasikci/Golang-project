@@ -1,7 +1,7 @@
 # Ignorer les notes perso
 lecon.js
 notes/
-
+lenslocked
 # Ignorer les fichiers temporaires
-
+lenslocked
 *.tmp
