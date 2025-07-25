@@ -1,25 +1,21 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Hello Page</title>
+    <title>Welcome</title>
 </head>
 <body>
+    <h1>Welcome to my awesome site!</h1>
+    <p>Bio: {{.Bio}}</p>
 
+    <script>
+        const user = {
+            name: {{.Name}},
+            age: {{.Age}},
+            bio: {{.Bio}}
 
-<H1>Hello, {{.Name}}</H1>
-<p>{{.Bio}}</p>
-
-<script>
-    const user = {
-        "Name": {{.Name}},
-        "Bio": {{.Bio}},
-        "age": {{.Age}}
-    };
-    console.log(user);
-
-</script>
-
+        };
+        console.log(user);
+    </script>
 </body>
 </html>
