@@ -39,7 +39,7 @@ type Template struct {
 	htmlTpl *template.Template
 }
 
-func (t Template) Execute(w http.ResponseWriter, data interface{}) {
+func (t Template) Execute(w http.ResponseWriter, data any) {
 	w.Header().Set("Content-type", "text/html; charset=uft-8")
 
 	err := t.htmlTpl.Execute(w, data) //data
