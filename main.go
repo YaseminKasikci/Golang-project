@@ -22,7 +22,7 @@ func main() {
 
 	// ------------------------------
 
-	r.Get("/faq", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "faq.gohtml"))))
+	r.Get("/faq", controllers.FAQ(views.Must(views.ParseFS(templates.FS, "faq.gohtml"))))
 
 	// r.Use(middleware.Logger)
 
