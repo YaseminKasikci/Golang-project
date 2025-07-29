@@ -2,14 +2,13 @@ package controllers
 
 import (
 
-	"github/yaseminkasikci/lenslocked/views"
-
+	
 	"net/http"
 )
 
 type Users struct{
 	Templates struct {
-		New views.Template
+		New Template
 	}
 
 }
