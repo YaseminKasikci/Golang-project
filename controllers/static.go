@@ -18,7 +18,7 @@ func FAQ(tpl views.Template) http.HandlerFunc {
 		Answer   template.HTML
 	}{
 		{
-			Question: "Is there a free version ?",
+			Question: "Is there a free version ? ",
 			Answer:   "Yes! We offer a free trial for 30 days on any paid plans.",
 		},
 		{
