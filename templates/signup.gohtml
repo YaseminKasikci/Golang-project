@@ -13,6 +13,36 @@
         <input name="pwd" id="pwd" type="password" placeholder=" passeword" required class="w-full px-3 py-2 border border-gray-300 placeholder-gray-500
       text-gray-800 rounded"  {{if .Email}}autofocus{{end}}/>
     </div>
+  <legend class=" font-semibold test-gray-800"> Select your gender</legend>
+    <div>
+      <label for="women" class="text-sm">men</label>
+      <input type="radio" name="sex" id="men"  value="men"/>
+    </div>
+    <div>
+      <label for="women" class="text-sm">women</label>
+      <input type="radio" name="sex" id="women"  value="women"/>
+    </div>
+    <legend class=" font-semibold test-gray-800"> Select your insterest</legend>
+     <div>
+      <label for="coding" class="text-sm">coding</label>
+      <input type="checkbox" name="insterest" id="coding"  value="coding"/>
+    </div>
+    <div>
+      <label for="reading" class="text-sm ">reading</label>
+      <input type="checkbox" name="insterest" id="reading"  value="reading"/>
+       </div>
+       <div>
+      <label for="music" class="text-sm ">music</label>
+      <input type="checkbox" name="insterest" id="music"  value="music"/>
+    </div>
+    <div>
+      <label for="walking" class="text-sm ">walking</label>
+      <input type="checkbox" name="insterest" id="walking"  value="walking"/>
+    </div>
+    <div>
+    <label for="avatar">Choose a profile picture:</label>
+      <input type="file" id="avatar" name="avatar" accept="image/png, image/jpeg" />
+    </div>
     <div class="py-4">
         <button type="submit"   class="w-full py-4 px-2 bg-indigo-600 hover:bg-indigo-700
     text-white rounded font-bold text-lg" >Sign up</button>
