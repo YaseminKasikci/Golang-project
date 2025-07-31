@@ -8,27 +8,27 @@ import (
 )
 
 type PostgresConfig struct {
-	Host string
-	Port string
-	User string
+	Host     string
+	Port     string
+	User     string
 	Password string
 	Database string
-	SSLMode string
+	SSLMode  string
 }
 
 func (cgf PostgresConfig) String() string {
-	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cgf.Host, cgf.Port, cgf.User, cgf.Password, cgf.Database, cgf.SSLMode )
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", cgf.Host, cgf.Port, cgf.User, cgf.Password, cgf.Database, cgf.SSLMode)
 }
 
 func main() {
 
 	cfg := PostgresConfig{
-		Host: "localhost",
-		Port: "5432",
-		User: "baloo",
+		Host:     "localhost",
+		Port:     "5432",
+		User:     "baloo",
 		Password: "junglebook",
 		Database: "lenslocked",
-		SSLMode: "disable",
+		SSLMode:  "disable",
 	}
 	db, err := sql.Open("pgx", cfg.String())
 	if err != nil {
@@ -42,7 +42,7 @@ func main() {
 	}
 	fmt.Println("connected!")
 
-	//CREATE A TABLE 
+	//CREATE A TABLE
 	_, err = db.Exec(`
 	CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY,
@@ -62,26 +62,40 @@ func main() {
 	}
 	fmt.Println("Tables created")
 
-	// INSERT some data
-	name := "new user"
-	email := "new@calhoun.io"
+	// // INSERT some data
+	// name := "new user"
+	// email := "new@calhoun.io"
 
-	// query := fmt.Sprintf(`
-	// INSERT INTO users (name, email)
-	// VALUES ('%s', '%s');
-	// `, name, email)
-	// fmt.Printf("Executing : %s\n", query)
-	// _ , err = db.Exec(query)
+	// // query := fmt.Sprintf(`
+	// // INSERT INTO users (name, email)
+	// // VALUES ('%s', '%s');
+	// // `, name, email)
+	// // fmt.Printf("Executing : %s\n", query)
+	// // _ , err = db.Exec(query)
 
+	// row := db.QueryRow(`
+	// 	INSERT INTO users (name, email)
+	// 	VALUES ($1, $2) RETURNING id;`, name, email)
+
+	// var id int
+	// err = row.Scan(&id)
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// fmt.Println("User created. id = ", id)
+	id := 1
 	row := db.QueryRow(`
-		INSERT INTO users (name, email)
-		VALUES ($1, $2) RETURNING id;`, name, email)
-		
-	var id int 
-	err = row.Scan(&id)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println("User created. id = ", id)
+		SELECT name, email
+		FROM users
+		WHERE id=$1;`, id)
+		var name, email string
+		err = row.Scan(&name, &email)
+		if err == sql.ErrNoRows {
+			fmt.Println("Error, no rows!")
+		}
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("User information: name=%s, email=%s\n", name, email)
 }
