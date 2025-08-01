@@ -3,13 +3,15 @@ package main
 import (
 	"fmt"
 	"os"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
 	for i, arg := range os.Args {
 		fmt.Println(i, arg)
 	}
-	
+
 	switch os.Args[1] {
 	case "hash":
 		//hash the password
@@ -25,7 +27,12 @@ func main() {
 }
 
 func hash(password string) {
-	fmt.Printf("TODO : HASH the password %q\n", password)
+	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Printf("error hashing: %v\n", password)
+		return
+	}
+	fmt.Println(string(hashedBytes))
 }
 
 func compare(password, hash string) {
