@@ -62,6 +62,9 @@ func main() {
 	}
 	fmt.Println("Tables created")
 
+
+
+
 	// // INSERT some data
 	// name := "new user"
 	// email := "new@calhoun.io"
@@ -129,6 +132,8 @@ func main() {
 		panic(err)
 	}
 	defer rows.Close()
+	
+
 	for rows.Next() {
 		var order Order
 		order.UserId = userID
