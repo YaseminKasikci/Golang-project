@@ -8,9 +8,6 @@ import (
 )
 
 func main() {
-	for i, arg := range os.Args {
-		fmt.Println(i, arg)
-	}
 
 	switch os.Args[1] {
 	case "hash":
@@ -36,5 +33,10 @@ func hash(password string) {
 }
 
 func compare(password, hash string) {
-	fmt.Printf("TODO: Compare the password %q with the hash %q\n", password, hash)
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	if err != nil {
+		fmt.Printf("Password is invalid: %v\n", password)
+		return
+	}
+	fmt.Printf("Password is correct !")
 }
