@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github/yaseminkasikci/lenslocked/models"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
 )
@@ -42,28 +43,33 @@ func main() {
 	}
 	fmt.Println("connected!")
 
-	//CREATE A TABLE
-	_, err = db.Exec(`
-	CREATE TABLE IF NOT EXISTS users (
-		id SERIAL PRIMARY KEY,
-		name TEXT,
-		email TEXT UNIQUE NOT NULL
-		);
-		
-		CREATE TABLE IF NOT EXISTS orders (
-		id SERIAL PRIMARY KEY,
-		user_id INT NOT NULL,
-		amount INT,
-		description TEXT
-		);
-	`)
+	us := models.UserService{
+		DB: db,
+	}
+	user, err := us.Create("bob3@bob.com", "bob123")
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("Tables created")
+	fmt.Println(user)
+	//CREATE A TABLE
+	// _, err = db.Exec(`
+	// CREATE TABLE IF NOT EXISTS users (
+	// 	id SERIAL PRIMARY KEY,
+	// 	name TEXT,
+	// 	email TEXT UNIQUE NOT NULL
+	// 	);
 
-
-
+	// 	CREATE TABLE IF NOT EXISTS orders (
+	// 	id SERIAL PRIMARY KEY,
+	// 	user_id INT NOT NULL,
+	// 	amount INT,
+	// 	description TEXT
+	// 	);
+	// `)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// fmt.Println("Tables created")
 
 	// // INSERT some data
 	// name := "new user"
@@ -115,39 +121,38 @@ func main() {
 	// }
 	// fmt.Println("Created fake orders.")
 
-	type Order struct {
-		ID          int
-		UserId      int
-		Amount      int
-		Description string
-	}
+	// type Order struct {
+	// 	ID          int
+	// 	UserId      int
+	// 	Amount      int
+	// 	Description string
+	// }
 
-	var orders []Order
-	userID := 1
-	rows, err := db.Query(`
-		SELECT id, amount, description
-		FROM orders
-		WHERE user_id=$1`, userID)
-	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
-	
+	// var orders []Order
+	// userID := 1
+	// rows, err := db.Query(`
+	// 	SELECT id, amount, description
+	// 	FROM orders
+	// 	WHERE user_id=$1`, userID)
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer rows.Close()
 
-	for rows.Next() {
-		var order Order
-		order.UserId = userID
-		err := rows.Scan(&order.ID, &order.Amount, &order.Description)
-		if err != nil {
-			panic(err)
-		}
-		orders = append(orders, order)
-	}
-	err = rows.Err()
-	if err != nil {
-		panic(err)
-	}
+	// for rows.Next() {
+	// 	var order Order
+	// 	order.UserId = userID
+	// 	err := rows.Scan(&order.ID, &order.Amount, &order.Description)
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+	// 	orders = append(orders, order)
+	// }
+	// err = rows.Err()
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	fmt.Println("Order:", orders)
+	// fmt.Println("Order:", orders)
 	// check for an err
 }
