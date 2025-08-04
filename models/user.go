@@ -26,11 +26,15 @@ func (us *UserService) Create(email, password string) (*User, error) {
 
 	}
 	passwordHash := string(hashedBytes)
+	fmt.Println("----------------------------->")
+	fmt.Println(passwordHash)
+	fmt.Println("<-----------------------------")
 
 	user := User{
 		Email:        email,
 		PasswordHash: passwordHash,
 	}
+
 	row := us.DB.QueryRow(`
 		INSERT INTO users ( email, password_hash)
 		VALUES ($1, $2) RETURNING id;`, email, passwordHash)

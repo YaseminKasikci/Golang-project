@@ -24,6 +24,7 @@ func main() {
 }
 
 func hash(password string) {
+	fmt.Println("Hashing password:", password)
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		fmt.Printf("error hashing: %v\n", password)
@@ -32,11 +33,25 @@ func hash(password string) {
 	fmt.Println(string(hashedBytes))
 }
 
+// func compare(password, hash string) {
+
+// 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+// 	if err != nil {
+// 		fmt.Printf("Password is invalid: %v\n", password)
+// 		return
+// 	}
+// 	fmt.Printf("Password is correct !")
+// }
+
 func compare(password, hash string) {
+	fmt.Println("Comparing password to hash...")
+	fmt.Printf("Password: '%s'\n", password)
+	fmt.Printf("Hash:     '%s'\n", hash)
+
 	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
 	if err != nil {
 		fmt.Printf("Password is invalid: %v\n", password)
 		return
 	}
-	fmt.Printf("Password is correct !")
+	fmt.Println("Password is correct!")
 }
