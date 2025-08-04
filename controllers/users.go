@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github/yaseminkasikci/lenslocked/models"
 	"net/http"
 )
 
@@ -9,6 +10,7 @@ type Users struct {
 	Templates struct {
 		New Template
 	}
+	UserService *models.UserService
 }
 
 func (u Users) New(w http.ResponseWriter, r *http.Request) {
@@ -20,11 +22,7 @@ func (u Users) New(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) Create(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
+
 	fmt.Fprint(w, "Email: ", r.FormValue("email"))
 	fmt.Fprint(w, "Password: ", r.FormValue("password"))
 

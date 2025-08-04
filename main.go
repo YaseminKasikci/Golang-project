@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github/yaseminkasikci/lenslocked/controllers"
+	"github/yaseminkasikci/lenslocked/models"
 	"github/yaseminkasikci/lenslocked/templates"
 	"github/yaseminkasikci/lenslocked/views"
 	"net/http"
@@ -29,12 +30,25 @@ func main() {
 		"faq.gohtml", "tailwind.gohtml",
 	))))
 
-	userC := controllers.Users{}
+	cfg := models.DefaultPostgresConfig()
+	db, err := models.Open(cfg)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	userService := models.UserService{
+		DB: db,
+	}
+
+	userC := controllers.Users{
+		UserService: &userService, 
+	}
 	userC.Templates.New = views.Must(views.ParseFS(
 		templates.FS,
 		"signup.gohtml", "tailwind.gohtml",
 	))
-	r.Get("/signup",userC.New)
+	r.Get("/signup", userC.New)
 	r.Post("/users", userC.Create)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
