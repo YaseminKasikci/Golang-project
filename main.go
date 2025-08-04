@@ -48,8 +48,13 @@ func main() {
 		templates.FS,
 		"signup.gohtml", "tailwind.gohtml",
 	))
+	userC.Templates.SignIn = views.Must(views.ParseFS(
+		templates.FS,
+		"signin.gohtml", "tailwind.gohtml",
+	))
 	r.Get("/signup", userC.New)
 	r.Post("/users", userC.Create)
+	r.Get("/signin", userC.SignIn)
 
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
