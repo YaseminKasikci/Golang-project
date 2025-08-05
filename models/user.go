@@ -21,14 +21,13 @@ type UserService struct {
 func (us *UserService) Create(email, password string) (*User, error) {
 	email = strings.ToLower(email)
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	println(fmt.Sprintf("*****/%s/*****", password))
+
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w\n", err)
 
 	}
 	passwordHash := string(hashedBytes)
-	fmt.Println("----------------------------->")
-	fmt.Println(passwordHash)
-	fmt.Println("<-----------------------------")
 
 	user := User{
 		Email:        email,
@@ -41,26 +40,26 @@ func (us *UserService) Create(email, password string) (*User, error) {
 	err = row.Scan(&user.ID)
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w\n", err)
-
 	}
 	return &user, nil
 }
 
-func (us *UserService) Authenticate(email, password string)(*User, error){
+func (us *UserService) Authenticate(email, password string) (*User, error) {
 	email = strings.ToLower(email)
-	user :=  User {
+	user := User{
 		Email: email,
 	}
+
 	row := us.DB.QueryRow(`
 	SELECT id, password_hash
-	FROM users WHERE emai=$1`, email)
+	FROM users WHERE email=$1`, email)
 	err := row.Scan(&user.ID, &user.PasswordHash)
 	if err != nil {
 		return nil, fmt.Errorf("authenticate : %w", err)
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
-		
+
 		return nil, fmt.Errorf("authenticate : %w", err)
 	}
 	return &user, nil
