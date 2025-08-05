@@ -57,10 +57,20 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	cookie := http.Cookie{
-		Name: "email",
+		Name:  "email",
 		Value: user.Email,
-		Path: "/",
+		Path:  "/",
 	}
 	http.SetCookie(w, &cookie)
 	fmt.Fprintf(w, "User authenticated: %+v", user)
+}
+
+func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	email, err := r.Cookie("email")
+	if err != nil {
+		fmt.Fprint(w, "The email cookie could not be read")
+		return
+	}
+	fmt.Fprintf(w, "Email cookie %s \n", email.Value)
+	fmt.Fprintf(w, "Headers: %+v\n", r.Header)
 }
