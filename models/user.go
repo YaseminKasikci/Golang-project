@@ -21,7 +21,7 @@ type UserService struct {
 func (us *UserService) Create(email, password string) (*User, error) {
 	email = strings.ToLower(email)
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	println(fmt.Sprintf("*****/%s/*****", password))
+	// println(fmt.Sprintf("*****/%s/*****", password))
 
 	if err != nil {
 		return nil, fmt.Errorf("create user: %w\n", err)
