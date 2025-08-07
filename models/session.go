@@ -1,7 +1,9 @@
 package models
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/base64"
 	"fmt"
 	"github/yaseminkasikci/lenslocked/rand"
 )
@@ -53,3 +55,14 @@ func (ss *SessionService) User(token string) (*User, error) {
 	// TODO : implement sessionService.User
 	return nil, nil
 }
+
+func (ss *SessionService) hash(token string) string{
+	tokenHash := sha256.Sum256([]byte(token))
+	return base64.URLEncoding.EncodeToString(tokenHash[:])
+}
+
+// type TokenManager struct {}
+
+// func (tm TokenManager) New() (token, tokenHash string, err error ){
+
+// }
