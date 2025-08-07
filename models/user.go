@@ -24,7 +24,7 @@ func (us *UserService) Create(email, password string) (*User, error) {
 	// println(fmt.Sprintf("*****/%s/*****", password))
 
 	if err != nil {
-		return nil, fmt.Errorf("create user: %w\n", err)
+		return nil, fmt.Errorf("create user: %w", err)
 
 	}
 	passwordHash := string(hashedBytes)
@@ -39,7 +39,7 @@ func (us *UserService) Create(email, password string) (*User, error) {
 		VALUES ($1, $2) RETURNING id;`, email, passwordHash)
 	err = row.Scan(&user.ID)
 	if err != nil {
-		return nil, fmt.Errorf("create user: %w\n", err)
+		return nil, fmt.Errorf("create user: %w", err)
 	}
 	return &user, nil
 }
