@@ -30,7 +30,7 @@ func (u Users) Create(w http.ResponseWriter, r *http.Request) {
 	user, err := u.UserService.Create(email, password)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "something went wrong", http.StatusInternalServerError)
+		http.Error(w, "something went wrong CREATE USER", http.StatusInternalServerError)
 		return
 	}
 	session, err := u.SessionService.Create(user.ID)
@@ -43,6 +43,7 @@ func (u Users) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	setCookie(w, CookieSession, session.Token)
 	http.Redirect(w, r, "/users/me", http.StatusFound)
+	// http.Redirect(w, r, "/users/me", http.StatusFound)
 
 }
 
@@ -62,23 +63,34 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 
 	data.Email = r.FormValue("email")
 	data.Password = r.FormValue("password")
-	user, err := u.UserService.Authenticate(data.Email, data.Password)
+
+	user, err := u.UserService.Authentificate(data.Email, data.Password)
+
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "something went wrong", http.StatusInternalServerError)
+		http.Error(w, "something went wrong USER PROCESS", http.StatusInternalServerError)
 		return
 	}
+
 	session, err := u.SessionService.Create(user.ID)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "something went wrong", http.StatusInternalServerError)
+		http.Error(w, "something went wrong SESSION PROCESS", http.StatusInternalServerError)
 	}
+
 	setCookie(w, CookieSession, session.Token)
-	http.Redirect(w, r, "/users/me", http.StatusAccepted)
+	fmt.Println("-----SET COOKIES---- ")
+
+	http.Redirect(w, r, "/users/me", http.StatusFound)
+
 }
 
 func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("-----CURRENTUSER---- ")
+
 	token, err := readCookie(r, CookieSession)
+	fmt.Println("-----CURRENTUSER---- ")
+
 	if err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "/signin", http.StatusFound)

@@ -44,7 +44,7 @@ func (us *UserService) Create(email, password string) (*User, error) {
 	return &user, nil
 }
 
-func (us *UserService) Authenticate(email, password string) (*User, error) {
+func (us *UserService) Authentificate(email, password string) (*User, error) {
 	email = strings.ToLower(email)
 	user := User{
 		Email: email,
@@ -55,12 +55,15 @@ func (us *UserService) Authenticate(email, password string) (*User, error) {
 	FROM users WHERE email=$1`, email)
 	err := row.Scan(&user.ID, &user.PasswordHash)
 	if err != nil {
-		return nil, fmt.Errorf("authenticate : %w", err)
+
+		return nil, fmt.Errorf("authenticate ROW SCAN : %w", err)
 	}
+
 	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
 	if err != nil {
 
-		return nil, fmt.Errorf("authenticate : %w", err)
+		return nil, fmt.Errorf("authenticate COMPARE-HASH-PWD: %w", err)
+
 	}
 	return &user, nil
 }
