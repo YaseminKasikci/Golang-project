@@ -55,17 +55,6 @@ func main() {
 		"signin.gohtml", "tailwind.gohtml",
 	))
 
-	logRequest := func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Println("Method:", r.Method)
-			log.Println("Origin:", r.Header.Get("Origin"))
-			log.Println("Referer:", r.Header.Get("Referer"))
-			log.Println("Token from cookie:", r.Header.Get("Cookie"))
-			log.Println("Token from header:", r.Header.Get("X-CSRF-Token"))
-			next.ServeHTTP(w, r)
-		})
-	}
-
 	r.Get("/signup", usersC.New)
 	r.Post("/users", usersC.Create)
 	r.Get("/signin", usersC.SignIn)
@@ -82,11 +71,9 @@ func main() {
 		[]byte(csrfKey),
 		csrf.Secure(false), // OK pour dev
 		csrf.TrustedOrigins([]string{"localhost:3000"}),
-		csrf.TrustedOrigins([]string{"localhost:3000"}),
 	)
 
-	// err = http.ListenAndServe(":3000", csrfMw(r))
-	err = http.ListenAndServe(":3000", logRequest(csrfMw(r)))
+	err = http.ListenAndServe(":3000", csrfMw(r))
 	if err != nil {
 		log.Fatal(err)
 	}
