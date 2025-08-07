@@ -79,26 +79,26 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	setCookie(w, CookieSession, session.Token)
-	fmt.Println("-----SET COOKIES---- ")
 
 	http.Redirect(w, r, "/users/me", http.StatusFound)
 
 }
 
 func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("-----CURRENTUSER---- ")
 
 	token, err := readCookie(r, CookieSession)
-	fmt.Println("-----CURRENTUSER---- ")
 
 	if err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "/signin", http.StatusFound)
 	}
+
 	user, err := u.SessionService.User(token)
 	if err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "/signin", http.StatusFound)
 	}
-	fmt.Fprintf(w, "Current user: %s\n", user.Email)
+
+	fmt.Fprintf(w, "Current users: %s\n", user.Email)
+
 }
