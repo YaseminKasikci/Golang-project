@@ -6,6 +6,11 @@ import (
 	"github/yaseminkasikci/lenslocked/rand"
 )
 
+const (
+	// minimum number of bytes to be used for each session token
+	MiniBytesPerToken = 32
+)
+
 type Session struct {
 	ID     int
 	UserID int
@@ -17,22 +22,28 @@ type Session struct {
 }
 
 type SessionService struct {
-	DB *sql.DB
+	DB            *sql.DB
+	BytesPerToken int
 }
 
 // 1. Query a Session via raw token, then query the user separately via
 func (ss *SessionService) Create(userID int) (*Session, error) {
 	// TODO : create the session token
-	token, err := rand.SessionToken()
+	bytesPerToken := ss.BytesPerToken
+	if bytesPerToken < MiniBytesPerToken {
+		bytesPerToken = MiniBytesPerToken
+	}
+	token, err := rand.String(bytesPerToken)
+
 	if err != nil {
 		return nil, fmt.Errorf("create:%w", err)
 	}
-	session :=Session {
+	session := Session{
 		UserID: userID,
-		Token: token, 
+		Token:  token,
 		//TODO : set the TokenHash
 	}
-	//TDO: store the session in ou db 
+	//TDO: store the session in ou db
 	// TODO : Implement SessionService.Create
 	return &session, nil
 }
