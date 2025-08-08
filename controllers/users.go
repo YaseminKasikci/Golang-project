@@ -33,6 +33,7 @@ func (u Users) Create(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "something went wrong CREATE USER", http.StatusInternalServerError)
 		return
 	}
+
 	session, err := u.SessionService.Create(user.ID)
 	if err != nil {
 		fmt.Println(err)
@@ -94,9 +95,11 @@ func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := u.SessionService.User(token)
+
 	if err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
 	}
 
 	fmt.Fprintf(w, "Current users: %s\n", user.Email)
@@ -108,12 +111,15 @@ func (u Users) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		http.Redirect(w, r, "/signin", http.StatusFound)
+		return
 	}
 	err = u.SessionService.Delete(token)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Somethin went wrong", http.StatusInternalServerError)
+		return
 	}
+
 	deleteCookie(w, CookieSession)
 	http.Redirect(w, r, "/signin", http.StatusFound)
 }

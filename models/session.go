@@ -81,7 +81,8 @@ func (ss *SessionService) User(token string) (*User, error) {
 	// The error will be overwritten with either a new error, or nil
 	err := row.Scan(&user.ID)
 	if err != nil {
-		return nil, fmt.Errorf("user: %w", err)
+
+		return nil, fmt.Errorf("user USER: %w", err)
 	}
 	// 3. Usinf the UserID from the session, we need to query for that user
 	row = ss.DB.QueryRow(`
@@ -98,7 +99,7 @@ func (ss *SessionService) Delete(token string) error {
 	tokenHash := ss.hash(token)
 	_, err := ss.DB.Exec(`
 	DELETE FROM sessions
-	WHERE token_hash = $1;`,tokenHash)
+	WHERE token_hash = $1;`, tokenHash)
 	if err != nil {
 		return fmt.Errorf("delete: %w", err)
 	}
