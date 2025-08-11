@@ -40,6 +40,11 @@ func main() {
 	}
 	defer db.Close()
 
+	err = models.Migrate(db, "migrations")
+	if err != nil {
+		panic(err)
+	}
+	
 	userService := models.UserService{
 		DB: db,
 	}
@@ -47,10 +52,10 @@ func main() {
 		DB: db,
 	}
 	usersC := controllers.Users{
-		UserService: &userService,
+		UserService:    &userService,
 		SessionService: &sessionService,
 	}
-	
+
 	usersC.Templates.New = views.Must(views.ParseFS(
 		templates.FS,
 		"signup.gohtml", "tailwind.gohtml",
