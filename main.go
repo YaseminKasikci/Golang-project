@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github/yaseminkasikci/lenslocked/controllers"
+	"github/yaseminkasikci/lenslocked/migrations"
 	"github/yaseminkasikci/lenslocked/models"
 	"github/yaseminkasikci/lenslocked/templates"
 	"github/yaseminkasikci/lenslocked/views"
@@ -33,18 +34,18 @@ func main() {
 	))))
 
 	cfg := models.DefaultPostgresConfig()
-	fmt.Println(cfg.String())
 	db, err := models.Open(cfg)
 	if err != nil {
 		panic(err)
 	}
 	defer db.Close()
 
-	err = models.Migrate(db, "migrations")
+	// Change the following line of code
+	err = models.MigrateFS(db, migrations.FS, ".")
 	if err != nil {
 		panic(err)
 	}
-	
+
 	userService := models.UserService{
 		DB: db,
 	}
