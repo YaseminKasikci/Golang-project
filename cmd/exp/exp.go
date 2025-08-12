@@ -1,27 +1,23 @@
 package main
 
 import (
-	stdctx "context"
-	"fmt"
+	"os"
 
-	"github/yaseminkasikci/lenslocked/context"
-	"github/yaseminkasikci/lenslocked/models"
-)
-
-type ctxKey string
-
-const (
-	favoriteColorKey ctxKey = "favorite-color"
+	"github.com/go-mail/mail/v2"
 )
 
 func main() {
-	ctx := stdctx.Background()
-	// set color to blue
-	user := models.User{
-		Email: "bobo@gmail.com",
-	}
-	ctx = context.WithUser(ctx, &user)
-
-	retrievedUser := context.User(ctx)
-	fmt.Println(retrievedUser.Email)
+	from := "test@lenslocked.com"
+	to := "yasemin.kasikci@ringover.com"
+	subject := "this is a test mail"
+	plaintext :="this is the body of the email"
+	html := `<h1>Hello there buddy</h1><p>this is the email</p><p>Hope you enjoy it</p>`
+	
+	msg := mail.NewMessage()
+	msg.SetHeader("To", to)
+	msg.SetHeader("From", from)
+	msg.SetHeader("Subject", subject)
+	msg.SetBody("text/pain", plaintext)
+	msg.AddAlternative("text/html", html)
+	msg.WriteTo(os.Stdout)
 }
