@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github/yaseminkasikci/lenslocked/models"
 )
 
@@ -12,39 +13,38 @@ const (
 )
 
 func main() {
-	email := models.Email{
-		From:      "test@lenslocked.com",
-		To:        "yasemin.kasikci@ringover.com",
-		Subject:   "this is a test mail",
-		Plaintext: "this is the body of the email",
-		HTML:      `<h1>Hello there buddy</h1><p>this is the email</p><p>Hope you enjoy it</p>`,
-	}
-	es := models.NewEmailService(models.STMPConfig{
+
+	es := models.NewEmailService(models.SMTPConfig{
 		Host:     host,
 		Port:     port,
 		Username: username,
 		Password: password,
 	})
-	err := es.Send(email)
+	err := es.ForgotPassword(
+		"yasemin.kasikci@ringover.com",
+		"https://lenslocked.com/reset-pw?token=abc123")
 	if err != nil {
 		panic(err)
 	}
-	// msg := mail.NewMessage()
-	// msg.SetHeader("To", to)
-	// msg.SetHeader("From", from)
-	// msg.SetHeader("Subject", subject)
-	// msg.SetBody("text/pain", plaintext)
-	// msg.AddAlternative("text/html", html)
-	// msg.WriteTo(os.Stdout)
-
-	// dialer := mail.NewDialer(host, port, username, password)
-	// err := dialer.DialAndSend(msg)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// fmt.Println("Message sent")
-
-	// defer sender.Close()
-	// sender.Send(from,  []string{to}, msg )
-	// sender.Send(from,  []string{to}, msg )
+	fmt.Println("Email sent")
 }
+
+// msg := mail.NewMessage()
+// msg.SetHeader("To", to)
+// msg.SetHeader("From", from)
+// msg.SetHeader("Subject", subject)
+// msg.SetBody("text/pain", plaintext)
+// msg.AddAlternative("text/html", html)
+// msg.WriteTo(os.Stdout)
+
+// dialer := mail.NewDialer(host, port, username, password)
+// err := dialer.DialAndSend(msg)
+// if err != nil {
+// 	panic(err)
+// }
+// fmt.Println("Message sent")
+
+// defer sender.Close()
+// sender.Send(from,  []string{to}, msg )
+// sender.Send(from,  []string{to}, msg )
+// }
