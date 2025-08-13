@@ -16,7 +16,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	host := os.Getenv("SMPT_HOST")
+	host := os.Getenv("SMTP_HOST")
 	portStr := os.Getenv("SMTP_PORT")
 	port, err := strconv.Atoi(portStr)
 	if err != nil {
@@ -25,12 +25,15 @@ func main() {
 	username := os.Getenv("SMTP_USERNAME")
 	password := os.Getenv("SMTP_PASSWORD")
 
-	es := models.NewEmailService(models.SMTPConfig{
+	configSMTP := models.SMTPConfig{
 		Host:     host,
 		Port:     port,
 		Username: username,
 		Password: password,
-	})
+	}
+	// spew.Dump(configSMTP)
+
+	es := models.NewEmailService(configSMTP)
 	err = es.ForgotPassword(
 		"yasemin.kasikci@ringover.com",
 		"https://lenslocked.com/reset-pw?token=abc123")
