@@ -20,7 +20,7 @@ type PasswordReset struct {
 	sql.NullTime
 }
 
-type passwordResetService struct {
+type PasswordResetService struct {
 	DB *sql.DB
 	// Token is only set when creating a new session.  When look up a session
 	// this will be left empty, as we only store the hash of a session token
@@ -31,9 +31,9 @@ type passwordResetService struct {
 	Duration time.Duration
 }
 
-func (service *passwordResetService) Create(email string) (*PasswordReset, error) {
+func (service *PasswordResetService) Create(email string) (*PasswordReset, error) {
 	return nil, fmt.Errorf("TODO: implement PasswordResetService.Create")
 }
- func (service *passwordResetService) Consume(token string) (*User, error) {
+ func (service *PasswordResetService) Consume(token string) (*User, error) {
 	return nil, fmt.Errorf("TODO: Implement PAswordResetService.Consume")
  }

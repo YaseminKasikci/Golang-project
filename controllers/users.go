@@ -5,15 +5,20 @@ import (
 	"github/yaseminkasikci/lenslocked/context"
 	"github/yaseminkasikci/lenslocked/models"
 	"net/http"
+	"net/url"
 )
 
 type Users struct {
 	Templates struct {
-		New    Template
-		SignIn Template
+		New            Template
+		SignIn         Template
+		ForgotPassword Template
+		CheckYourEmail Template
 	}
-	UserService    *models.UserService
-	SessionService *models.SessionService
+	UserService          *models.UserService
+	SessionService       *models.SessionService
+	PasswordResetService *models.PasswordResetService
+	EmailService         *models.EmailService
 }
 
 func (u Users) New(w http.ResponseWriter, r *http.Request) {
@@ -93,24 +98,6 @@ func (u Users) CurrentUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprintf(w, "Current users: %s\n", user.Email)
-
-	// token, err := readCookie(r, CookieSession)
-
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	http.Redirect(w, r, "/signin", http.StatusFound)
-	// }
-
-	// user, err := u.SessionService.User(token)
-
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	http.Redirect(w, r, "/signin", http.StatusFound)
-	// 	return
-	// }
-
-	// fmt.Fprintf(w, "Current users: %s\n", user.Email)
-
 }
 
 func (u Users) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
@@ -129,6 +116,40 @@ func (u Users) ProcessSignOut(w http.ResponseWriter, r *http.Request) {
 
 	deleteCookie(w, CookieSession)
 	http.Redirect(w, r, "/signin", http.StatusFound)
+}
+
+func (u Users) ForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Email string
+	}
+	data.Email = r.FormValue("email")
+	u.Templates.SignIn.Execute(w, r, data)
+}
+
+func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		Email string
+	}
+	data.Email = r.FormValue("email")
+	pwdReset, err := u.PasswordResetService.Create(data.Email)
+	if err != nil {
+		// TODO HAndle other cases in the future. For instance, if a user does not exist with that email
+		fmt.Println(err)
+		http.Error(w, "something went wrong processforgotpwd.", http.StatusInternalServerError)
+		return
+	}
+	vals := url.Values{
+		"token": {pwdReset.Token},
+	}
+	resetURL := "https://www.lenslocked.com/reset-pwd?" + vals.Encode()
+	err = u.EmailService.ForgotPassword(data.Email, resetURL)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "something went wrong in processforgotpwd.", http.StatusInternalServerError)
+	}
+	// Don't render the reset token here ! We need the user to confirm they have 
+	//Access to the email account to verify their identify 
+	u.Templates.CheckYourEmail.Execute(w, r, data)
 }
 
 type UserMiddleware struct {
