@@ -123,10 +123,12 @@ func (u Users) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 		Email string
 	}
 	data.Email = r.FormValue("email")
-	u.Templates.SignIn.Execute(w, r, data)
+	u.Templates.ForgotPassword.Execute(w, r, data)
 }
 
 func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("PRocess FORGOTP function ?")
+
 	var data struct {
 		Email string
 	}
@@ -147,8 +149,8 @@ func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		http.Error(w, "something went wrong in processforgotpwd.", http.StatusInternalServerError)
 	}
-	// Don't render the reset token here ! We need the user to confirm they have 
-	//Access to the email account to verify their identify 
+	// Don't render the reset token here ! We need the user to confirm they have
+	//Access to the email account to verify their identify
 	u.Templates.CheckYourEmail.Execute(w, r, data)
 }
 
