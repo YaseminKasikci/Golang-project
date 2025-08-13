@@ -8,17 +8,63 @@ import (
 	"github/yaseminkasikci/lenslocked/templates"
 	"github/yaseminkasikci/lenslocked/views"
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/csrf"
+	"github.com/joho/godotenv"
 	// "github.com/go-chi/chi/v5/middleware"
 )
 
+type config struct {
+	PSQL models.PostgresConfig
+	SMTP models.SMTPConfig
+	CSRF struct {
+		Key    string
+		Secure bool
+	}
+	Server struct {
+		Address string
+	}
+}
+
+func loadEnvConfig() (config, error) {
+	var cfg config
+	err := godotenv.Load()
+	if err != nil {
+		return cfg, err
+	}
+
+	//
+	// read PSQL values from an Env variable
+	cfg.PSQL = models.DefaultPostgresConfig()
+	//SMTP
+	cfg.SMTP.Host = os.Getenv("SMTP_HOST")
+	portStr := os.Getenv("SMTP_PORT")
+	cfg.SMTP.Port, err = strconv.Atoi(portStr)
+	if err != nil {
+		return cfg, err
+	}
+	cfg.SMTP.Username = os.Getenv("SMTP_USERNAME")
+	cfg.SMTP.Password = os.Getenv("SMTP_PASSWORD")
+	// read CSRF values from an Env variable
+	cfg.CSRF.Key = "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
+	cfg.CSRF.Secure = false
+	// read SERVER values from an ENV variable
+	cfg.Server.Address = ":3000"
+	return cfg, nil
+}
+
 func main() {
+	cfg, err := loadEnvConfig()
+	if err != nil {
+		panic(err)
+	}
 
 	//database
-	cfg := models.DefaultPostgresConfig()
-	db, err := models.Open(cfg)
+
+	db, err := models.Open(cfg.PSQL)
 	if err != nil {
 		panic(err)
 	}
@@ -31,29 +77,34 @@ func main() {
 	}
 
 	// setup services
-	userService := models.UserService{
+	userService := &models.UserService{
 		DB: db,
 	}
-	sessionService := models.SessionService{
+	sessionService := &models.SessionService{
 		DB: db,
 	}
+	pwReserService := &models.PasswordResetService{
+		DB: db,
+	}
+	emailService := models.NewEmailService(cfg.SMTP)
 
 	// SETup middleware
 	umw := controllers.UserMiddleware{
-		SessionService: &sessionService,
+		SessionService: sessionService,
 	}
 
-	csrfKey := "gFvi45R4fy5xNBlnEeZtQbfAVCYEIAUX"
 	csrfMw := csrf.Protect(
-		[]byte(csrfKey),
-		csrf.Secure(false), // OK pour dev
+		[]byte(cfg.CSRF.Key),
+		csrf.Secure(cfg.CSRF.Secure), // OK pour dev
 		csrf.TrustedOrigins([]string{"localhost:3000"}),
 	)
 
 	// setup controllers
 	usersC := controllers.Users{
-		UserService:    &userService,
-		SessionService: &sessionService,
+		UserService:          userService,
+		SessionService:       sessionService,
+		PasswordResetService: pwReserService,
+		EmailService:         emailService,
 	}
 
 	usersC.Templates.New = views.Must(views.ParseFS(
@@ -110,7 +161,9 @@ func main() {
 	})
 
 	// start the server
-	fmt.Println("Starting the server on :3000...")
-	http.ListenAndServe(":3000", r)
-
+	fmt.Printf("Starting the server on %s...\n", cfg.Server.Address)
+	err = http.ListenAndServe(cfg.Server.Address, r)
+	if err != nil {
+		panic(err)
+	}
 }
