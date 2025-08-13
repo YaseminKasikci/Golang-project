@@ -6,3 +6,6 @@ notes/
 
 *.tmp
 lenslocked
+
+# Env Variables
+.env

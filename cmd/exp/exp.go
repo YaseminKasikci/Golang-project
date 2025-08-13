@@ -3,16 +3,27 @@ package main
 import (
 	"fmt"
 	"github/yaseminkasikci/lenslocked/models"
-)
+	"log"
+	"os"
+	"strconv"
 
-const (
-	host     = "sandbox.smtp.mailtrap.io"
-	port     = 587
-	username = "1a2dab91c58643"
-	password = "1e1d4a2d0fe1e3"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	host := os.Getenv("SMPT_HOST")
+	portStr := os.Getenv("SMTP_PORT")
+	port, err := strconv.Atoi(portStr)
+	if err != nil {
+		panic(err)
+	}
+	username := os.Getenv("SMTP_USERNAME")
+	password := os.Getenv("SMTP_PASSWORD")
 
 	es := models.NewEmailService(models.SMTPConfig{
 		Host:     host,
@@ -20,7 +31,7 @@ func main() {
 		Username: username,
 		Password: password,
 	})
-	err := es.ForgotPassword(
+	err = es.ForgotPassword(
 		"yasemin.kasikci@ringover.com",
 		"https://lenslocked.com/reset-pw?token=abc123")
 	if err != nil {
@@ -28,23 +39,3 @@ func main() {
 	}
 	fmt.Println("Email sent")
 }
-
-// msg := mail.NewMessage()
-// msg.SetHeader("To", to)
-// msg.SetHeader("From", from)
-// msg.SetHeader("Subject", subject)
-// msg.SetBody("text/pain", plaintext)
-// msg.AddAlternative("text/html", html)
-// msg.WriteTo(os.Stdout)
-
-// dialer := mail.NewDialer(host, port, username, password)
-// err := dialer.DialAndSend(msg)
-// if err != nil {
-// 	panic(err)
-// }
-// fmt.Println("Message sent")
-
-// defer sender.Close()
-// sender.Send(from,  []string{to}, msg )
-// sender.Send(from,  []string{to}, msg )
-// }
