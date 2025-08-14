@@ -70,7 +70,6 @@ func (us *UserService) Authentificate(email, password string) (*User, error) {
 
 func (us *UserService) UpdatePassword(userID int, password string) error {
 	hashedBytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	// println(fmt.Sprintf("*****/%s/*****", password))
 
 	if err != nil {
 		return fmt.Errorf("update password: %w", err)

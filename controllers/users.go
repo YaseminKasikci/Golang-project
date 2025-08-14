@@ -180,7 +180,7 @@ func (u Users) ProcessResetPassword(w http.ResponseWriter, r *http.Request) {
 	err = u.UserService.UpdatePassword(user.ID, data.Password)
 	if err != nil {
 		fmt.Println(err)
-		http.Redirect(w,r, "/signin", http.StatusFound)
+		http.Redirect(w, r, "/signin", http.StatusFound)
 		return
 	}
 
@@ -195,7 +195,7 @@ func (u Users) ProcessResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	setCookie(w, CookieSession, session.Token)
-		http.Redirect(w, r, "/users/me", http.StatusFound)
+	http.Redirect(w, r, "/users/me", http.StatusFound)
 }
 
 type UserMiddleware struct {
