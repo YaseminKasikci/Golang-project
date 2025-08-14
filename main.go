@@ -161,7 +161,6 @@ func main() {
 	r.Get("/reset-pw", usersC.ResetPassword)
 	r.Post("/reset-pw", usersC.ProcessResetPassword)
 
-	fmt.Println("after post ?")
 
 	//r.Get("/users/me", usersC.CurrentUser)
 	r.Route("/users/me", func(r chi.Router) {

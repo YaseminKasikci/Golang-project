@@ -6,6 +6,8 @@ import (
 	"github/yaseminkasikci/lenslocked/models"
 	"net/http"
 	"net/url"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 type Users struct {
@@ -128,8 +130,6 @@ func (u Users) ForgotPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("PRocess FORGOTP function ?")
-
 	var data struct {
 		Email string
 	}
@@ -144,7 +144,7 @@ func (u Users) ProcessForgotPassword(w http.ResponseWriter, r *http.Request) {
 	vals := url.Values{
 		"token": {pwdReset.Token},
 	}
-	resetURL := "https://www.lenslocked.com/reset-pwd?" + vals.Encode()
+	resetURL := "https://www.lenslocked.com/reset-pw?" + vals.Encode()
 	err = u.EmailService.ForgotPassword(data.Email, resetURL)
 	if err != nil {
 		fmt.Println(err)
@@ -170,10 +170,12 @@ func (u Users) ProcessResetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 	data.Token = r.FormValue("token")
 	data.Password = r.FormValue("password")
+	spew.Dump(data)
+
 	user, err := u.PasswordResetService.Consume(data.Token)
+	spew.Dump(user)
 	if err != nil {
 		fmt.Print(err)
-		// TODO: distinguish between types of errors
 		http.Error(w, "something went wrong in processResetPAssword", http.StatusInternalServerError)
 		return
 	}
