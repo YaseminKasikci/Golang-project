@@ -83,6 +83,8 @@ func (service *PasswordResetService) Create(email string) (*PasswordReset, error
 }
 func (service *PasswordResetService) Consume(token string) (*User, error) {
 	tokenHash := service.hash(token)
+	fmt.Println("HASH token:", tokenHash)
+
 	var user User
 	var pwReset PasswordReset
 
