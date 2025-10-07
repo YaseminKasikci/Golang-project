@@ -181,7 +181,7 @@ func main() {
 		r.Use(umw.RequireUser)
 		r.Get("/", usersC.CurrentUser)
 	})
-	
+
 	r.Route("/galleries", func(r chi.Router) {
 		// r.Get("/{id}", galleriesC.Show)
 		r.Group(func(r chi.Router) {
@@ -189,6 +189,7 @@ func main() {
 			r.Get("/new", galleriesC.New)
 			r.Post("/", galleriesC.Create)
 			r.Get("/{id}/edit", galleriesC.Edit)
+			r.Post("/{id}", galleriesC.Update)
 		})
 	})
 
