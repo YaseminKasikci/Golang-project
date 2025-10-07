@@ -59,7 +59,7 @@ func (g Galleries) Edit(w http.ResponseWriter, r *http.Request) {
 		if errors.Is(err, models.ErrNotFound) {
 			http.Error(w, "Gallery not found", http.StatusNotFound)
 		}
-		http.Error(w, "Something went wrong CREATE GALLERIESC", http.StatusInternalServerError)
+		http.Error(w, "Something went wrong EDIt GALLERIES C", http.StatusInternalServerError)
 		return
 	}
 	user := context.User(r.Context())
