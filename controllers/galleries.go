@@ -109,6 +109,7 @@ func (g Galleries) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (g Galleries) Index(w http.ResponseWriter, r *http.Request) {
+
 	type Gallery struct {
 		ID    int
 		Title string
@@ -119,9 +120,11 @@ func (g Galleries) Index(w http.ResponseWriter, r *http.Request) {
 	user := context.User(r.Context())
 	galleries, err := g.GalleryService.ByUserID(user.ID)
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, "something went wrong INDEX GALLERIES C", http.StatusInternalServerError)
 		return
 	}
+
 	for _, gallery := range galleries {
 		data.Galleries = append(data.Galleries, Gallery{
 			ID:    gallery.ID,
