@@ -73,8 +73,9 @@ func (g Galleries) Show(w http.ResponseWriter, r *http.Request) {
 	data.ID = gallery.ID
 	data.Title = gallery.Title
 	for i := 0; i < 20; i++ {
-		w, h := rand.Intn(500) + 200, rand.Intn(500)+200
-		catImageURL := fmt.Sprintf("https://placekitten.com/%d/%d", w, h)
+		w, h := rand.Intn(500)+200, rand.Intn(500)+200
+		catImageURL := fmt.Sprintf("https://picsum.photos/%d/%d", w, h)
+		// catImageURL := fmt.Sprintf("https://placekittens.com/%d/%d", w, h)
 		data.Images = append(data.Images, catImageURL)
 	}
 	g.Templates.Show.Execute(w, r, data)
