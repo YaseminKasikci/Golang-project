@@ -57,8 +57,8 @@ func (g Galleries) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	type Image struct {
-		GalleryID int
-		Filename  string
+		GalleryID       int
+		Filename        string
 		FilenameEscaped string
 	}
 	var data struct {
@@ -77,8 +77,8 @@ func (g Galleries) Show(w http.ResponseWriter, r *http.Request) {
 	}
 	for _, image := range images {
 		data.Images = append(data.Images, Image{
-			GalleryID: image.GalleryID,
-			Filename:  image.Filename,
+			GalleryID:       image.GalleryID,
+			Filename:        image.Filename,
 			FilenameEscaped: url.PathEscape(image.Filename),
 		})
 	}
@@ -90,12 +90,33 @@ func (g Galleries) Edit(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	var data struct {
-		ID    int
-		Title string
+	type Image struct {
+		GalleryID       int
+		Filename        string
+		FilenameEscaped string
 	}
+
+	var data struct {
+		ID     int
+		Title  string
+		Images []Image
+	}
+
 	data.ID = gallery.ID
 	data.Title = gallery.Title
+	images, err := g.GalleryService.Images(gallery.ID)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "SOmething went wrong", http.StatusInternalServerError)
+		return
+	}
+	for _, image := range images {
+		data.Images = append(data.Images, Image{
+			GalleryID:       image.GalleryID,
+			Filename:        image.Filename,
+			FilenameEscaped: url.PathEscape(image.Filename),
+		})
+	}
 	g.Templates.Edit.Execute(w, r, data)
 }
 
@@ -163,7 +184,7 @@ func (g Galleries) Image(w http.ResponseWriter, r *http.Request) {
 	}
 	image, err := g.GalleryService.Image(galleryID, filename)
 	if err != nil {
-		if errors.Is(err, models.ErrNotFound){
+		if errors.Is(err, models.ErrNotFound) {
 			http.Error(w, "Image not found", http.StatusNotFound)
 			return
 		}
@@ -172,7 +193,7 @@ func (g Galleries) Image(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.ServeFile(w,r, image.Path)
+	http.ServeFile(w, r, image.Path)
 }
 
 type galleryOpt func(http.ResponseWriter, *http.Request, *models.Gallery) error
