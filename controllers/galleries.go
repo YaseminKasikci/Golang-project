@@ -5,7 +5,6 @@ import (
 	"github/yaseminkasikci/lenslocked/context"
 	"github/yaseminkasikci/lenslocked/errors"
 	"github/yaseminkasikci/lenslocked/models"
-	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -56,20 +55,29 @@ func (g Galleries) Show(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-
+	type Image struct {
+		GalleryID int
+		Filename  string
+	}
 	var data struct {
 		ID     int
 		Title  string
-		Images []string
+		Images []Image
 	}
 
 	data.ID = gallery.ID
 	data.Title = gallery.Title
-	for i := 0; i < 20; i++ {
-		w, h := rand.Intn(500)+200, rand.Intn(500)+200
-		catImageURL := fmt.Sprintf("https://picsum.photos/%d/%d", w, h)
-		// catImageURL := fmt.Sprintf("https://placekittens.com/%d/%d", w, h)
-		data.Images = append(data.Images, catImageURL)
+	images, err := g.GalleryService.Images(gallery.ID)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, "SOmething went wrong", http.StatusInternalServerError)
+		return
+	}
+	for _, image := range images {
+		data.Images = append(data.Images, Image{
+			GalleryID: image.GalleryID,
+			Filename:  image.Filename,
+		})
 	}
 	g.Templates.Show.Execute(w, r, data)
 }
@@ -140,7 +148,7 @@ func (g Galleries) Delete(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Something went wrong DELETE GALLERIES C", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w,r,"/galleries", http.StatusFound)
+	http.Redirect(w, r, "/galleries", http.StatusFound)
 }
 
 type galleryOpt func(http.ResponseWriter, *http.Request, *models.Gallery) error
