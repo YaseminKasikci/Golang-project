@@ -5,6 +5,7 @@ import (
 	"github/yaseminkasikci/lenslocked/context"
 	"github/yaseminkasikci/lenslocked/errors"
 	"github/yaseminkasikci/lenslocked/models"
+	"math/rand"
 	"net/http"
 	"strconv"
 
@@ -13,6 +14,7 @@ import (
 
 type Galleries struct {
 	Templates struct {
+		Show  Template
 		New   Template
 		Edit  Template
 		Index Template
@@ -47,6 +49,35 @@ func (g Galleries) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	editPath := fmt.Sprintf("/galleries/%d/edit", gallery.ID)
 	http.Redirect(w, r, editPath, http.StatusFound)
+}
+
+func (g Galleries) Show(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusNotFound)
+		return
+	}
+	gallery, err := g.GalleryService.ByID(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			http.Error(w, "Gallery not found", http.StatusNotFound)
+		}
+		http.Error(w, "Something went wrong EDIt GALLERIES C", http.StatusInternalServerError)
+		return
+	}
+	var data struct {
+		ID     int
+		Title  string
+		Images []string
+	}
+	data.ID = gallery.ID
+	data.Title = gallery.Title
+	for i := 0; i < 20; i++ {
+		w, h := rand.Intn(500) + 200, rand.Intn(500)+200
+		catImageURL := fmt.Sprintf("https://placekitten.com/%d/%d", w, h)
+		data.Images = append(data.Images, catImageURL)
+	}
+	g.Templates.Show.Execute(w, r, data)
 }
 
 func (g Galleries) Edit(w http.ResponseWriter, r *http.Request) {
