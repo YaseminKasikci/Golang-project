@@ -202,31 +202,13 @@ func (g Galleries) DeleteImage(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	err = g.GalleryService.De(gallery.ID, filename)
+	err = g.GalleryService.DeleteImage(gallery.ID, filename)
 	if err != nil {
 		http.Error(w, "Something went wrong", http.StatusInternalServerError)
 		return
 	}
 	editPath := fmt.Sprintf("/galleries/%d/edit", gallery.ID)
 	http.Redirect(w, r, editPath, http.StatusFound)
-
-	galleryID, err := strconv.Atoi(chi.URLParam(r, "id"))
-	if err != nil {
-		http.Error(w, "Invalid ID", http.StatusNotFound)
-		return
-	}
-	image, err := g.GalleryService.Image(galleryID, filename)
-	if err != nil {
-		if errors.Is(err, models.ErrNotFound) {
-			http.Error(w, "Image not found", http.StatusNotFound)
-			return
-		}
-		fmt.Println(err)
-		http.Error(w, "something went wront IMAGE GALLERIES C", http.StatusInternalServerError)
-		return
-	}
-
-	http.ServeFile(w, r, image.Path)
 }
 
 type galleryOpt func(http.ResponseWriter, *http.Request, *models.Gallery) error
