@@ -43,11 +43,11 @@ func checkContentType(r io.ReadSeeker, allowedTypes []string) error {
 }
 
 func checkExtension(filename string, allowedExtensions []string) error {
+
 	if !hasExtension(filename, allowedExtensions) {
 		return FileError{
 			Issue: fmt.Sprintf("invalid extension: %v", filepath.Ext(filename)),
 		}
 	}
 	return nil
-
 }

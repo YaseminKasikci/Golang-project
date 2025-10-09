@@ -73,7 +73,7 @@ func (g Galleries) Show(w http.ResponseWriter, r *http.Request) {
 	images, err := g.GalleryService.Images(gallery.ID)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "SOmething went wrong", http.StatusInternalServerError)
+		http.Error(w, "SOmething went wrong SHOW GALLERIES C", http.StatusInternalServerError)
 		return
 	}
 	for _, image := range images {
@@ -108,7 +108,7 @@ func (g Galleries) Edit(w http.ResponseWriter, r *http.Request) {
 	images, err := g.GalleryService.Images(gallery.ID)
 	if err != nil {
 		fmt.Println(err)
-		http.Error(w, "SOmething went wrong", http.StatusInternalServerError)
+		http.Error(w, "SOmething went wrong EDIT GALLERIES C", http.StatusInternalServerError)
 		return
 	}
 	for _, image := range images {
@@ -211,13 +211,20 @@ func (g Galleries) UplaodImage(w http.ResponseWriter, r *http.Request) {
 	for _, fileHeader := range fileHeaders {
 		file, err := fileHeader.Open()
 		if err != nil {
-			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+			http.Error(w, "Something went wrong UPLAODIMAGE- fileHeader GALLERIES C", http.StatusInternalServerError)
 			return
 		}
 		defer file.Close()
+
 		err = g.GalleryService.CreateImage(gallery.ID, fileHeader.Filename, file)
 		if err != nil {
-			http.Error(w, "Something went wrong", http.StatusInternalServerError)
+			var fileErr models.FileError
+			if errors.As(err, &fileErr) {
+				msg := fmt.Sprintf("%v has an invalid content type or extension. Only png, gif, jpg, files can be uploaded", fileHeader.Filename)
+				http.Error(w, msg, http.StatusBadRequest)
+				return
+			}
+			http.Error(w, "Something went wrong UPLAODIMAGE- createIMAGE GALLERIES C", http.StatusInternalServerError)
 			return
 		}
 	}
@@ -233,7 +240,7 @@ func (g Galleries) DeleteImage(w http.ResponseWriter, r *http.Request) {
 	}
 	err = g.GalleryService.DeleteImage(gallery.ID, filename)
 	if err != nil {
-		http.Error(w, "Something went wrong", http.StatusInternalServerError)
+		http.Error(w, "Something went wrong DELETING IMAGE GALLERIES C", http.StatusInternalServerError)
 		return
 	}
 	editPath := fmt.Sprintf("/galleries/%d/edit", gallery.ID)
