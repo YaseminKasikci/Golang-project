@@ -16,7 +16,8 @@
     text-white rounded font-bold text-lg">Update</button>
     </div>
 </form>
-  <div class="py-4">
+<div class="py-2">  </div>
+  <div class="py-4"> {{template "upload_image_form" .}} </div>
     <h2 class="pb-2 text-sm font-semibold text-gray-800">Current Images</h2>
     <div class="py-2 grid grid-cols-8 gap-2">
       {{range .Images}}
@@ -34,7 +35,7 @@
     <h2>Dangerous Actions</h2>
     <form action="/galleries/{{.ID}}/delete" method="post" onsubmit=" return confirm('Do you realy want to delete this gallery?');">
     <div class="hidden">
-        {{csrfField}}
+        {{csrfField}}!
     </div>
     <button type="submit"   class=" py-2 px-8 bg-red-600 hover:bg-red-700
     text-white rounded font-bold text-lg" >Delete</button>
@@ -44,8 +45,22 @@
 
 {{template "footer" .}}
 {{define "delete_image_form"}}
-<form action="/galleries/{{.GalleryID}}/images/{{.FilenameEscaped}}/delete" method="post" onsubmit="return confirm('Do you really want to delete this image?');">
+<form action="/galleries/{{.GalleryID}}/images/{{.FilenameEscaped}}/delete"   method="post" onsubmit="return confirm('Do you really want to delete this image?');">
 {{csrfField}}
 <button type="submit" class="p-1 text-xs text-red-800 bg-red-100 border-red-800 rounded">Delete</button>
+</form>
+{{end}}
+
+{{define "upload_image_form"}}
+<form method="post" action="/galleries/{{.ID}}/images" enctype="multipart/form-data" >
+{{csrfField}}
+<div class="py-2"> 
+  <label for="images" class="block mb-2 text-sm font-semibold text-gray-800">
+  Add Images
+  <p class="py-2 text-xs text-gray-600 font-normal"> Please only upload jpg, png, and gif files </p>
+  </label>
+  <input type="file" multiple accept="image/png, image/jpeg, image/gif" id="id" name="images"/>
+</div>
+<button type="submit" class="py-2 px-8 text-white text-lg font-bold bg-indigo-600 hover:bg-indigo-700  rounded">Upload</button>
 </form>
 {{end}}
