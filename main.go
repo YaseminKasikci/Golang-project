@@ -203,11 +203,12 @@ func main() {
 			r.Get("/{id}/edit", galleriesC.Edit)
 			r.Post("/{id}", galleriesC.Update)
 			r.Post("/{id}/delete", galleriesC.Delete)
+			r.Post("/{id}/images", galleriesC.UplaodImage)
 			r.Post("/{id}/images/{filename}/delete", galleriesC.DeleteImage)
 		})
 	})
 
-	r.NotFound(func(w http.ResponseWriter, r *http.Request) { 
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 	})
 
@@ -218,4 +219,3 @@ func main() {
 		panic(err)
 	}
 }
- 
