@@ -1,14 +1,25 @@
 package main
 
 import (
-	"fmt"
-	"github/yaseminkasikci/lenslocked/models"
+	"io"
+	"net/http"
+	"os"
 )
 
 func main() {
-	gs := models.GalleryService{}
-	fmt.Println(gs.Images(2))
+	sketchyURL := "http://localhost:3000/galleries/2/images/../images-1/test.png"
+	resp, err := http.Get(sketchyURL)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	io.Copy(os.Stdout, resp.Body)
 }
+
+// func main() {
+// 	gs := models.GalleryService{}
+// 	fmt.Println(gs.Images(2))
+// }
 
 // func main() {
 // 	err := godotenv.Load()
