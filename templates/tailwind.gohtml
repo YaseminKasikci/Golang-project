@@ -5,10 +5,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-{{/* <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"> */}}
-  <script src="https://cdn.tailwindcss.com"></script>
+{{/* <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script> */}}
+  <link rel="stylesheet" href="/assets/styles.css" />
 </head>
-<body>
+<body class="flex flex-col min-h-screen">
 <header class="bg-gradient-to-r from-pink-800 to-indigo-800 text-white">
     <nav class="px-8 py-6 flex item-center ">
         <div class ="text-4xl pr-12 font-serif">Lenslocked</div>
@@ -60,11 +61,13 @@
   {{end}}
 </div>
 {{end}}
+
 {{end}}
 
   <!-- each page's content goes here -->
 
 {{define "footer"}}
+
 <script>
   function closeAlert(event){
     let closeable = event.target.closest(".closeable");
