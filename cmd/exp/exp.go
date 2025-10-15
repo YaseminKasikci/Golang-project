@@ -35,7 +35,12 @@ func main() {
 
 	// Redirect user to consent page to ask for permission
 	// for the scopes specified above.
-	url := conf.AuthCodeURL("state", oauth2.AccessTypeOffline, oauth2.S256ChallengeOption(verifier))
+	url := conf.AuthCodeURL(
+		"state",
+		oauth2.SetAuthURLParam("token_access_type", "offline"),
+		// oauth2.AccessTypeOffline,
+		oauth2.S256ChallengeOption(verifier),
+	)
 	fmt.Printf("Visit the URL for the auth dialog: %v\n", url)
 	fmt.Printf("VOnce you have a code, paste it and press enter: ")
 
@@ -52,8 +57,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	enc :=json.NewEncoder(os.Stdout)
-	enc.SetIndent(""," ")
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", " ")
 	enc.Encode(tok)
 	// client := conf.Client(ctx, tok)
 	// resp, err := client.Post("https://api.dropboxapi.com/2/files/list_folder", "application/json", strings.NewReader(`{
