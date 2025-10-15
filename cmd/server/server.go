@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/gorilla/csrf"
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
 	// "github.com/go-chi/chi/v5/middleware"
 )
 
@@ -27,6 +28,7 @@ type config struct {
 	Server struct {
 		Address string
 	}
+	OAuthProviders map[string]*oauth2.Config
 }
 
 func loadEnvConfig() (config, error) {
@@ -65,7 +67,17 @@ func loadEnvConfig() (config, error) {
 	// read SERVER values from an ENV variable
 	cfg.Server.Address = ":3000"
 	// cfg.Server.Address = os.Getenv("SERVER_ADDRESS")
-
+	cfg.OAuthProviders = make(map[string]*oauth2.Config)
+	dbxConfig := &oauth2.Config{
+		ClientID:     os.Getenv("DROPBOX_APP_ID"),
+		ClientSecret: os.Getenv("DROPBOX_APP_SECRET"),
+		Scopes:       []string{"files.metadata.read", "files.content.read"},
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  "https://www.dropbox.com/oauth2/authorize",
+			TokenURL: "https://api.dropboxapi.com/oauth2/token",
+		},
+	}
+	cfg.OAuthProviders["dropbox"] = dbxConfig
 	return cfg, nil
 }
 
@@ -210,6 +222,9 @@ func run(cfg config) error {
 		r.Use(umw.RequireUser)
 		r.Get("/", usersC.CurrentUser)
 	})
+	oauthC := controllers.OAuth{
+		ProviderConfigs: cfg.OAuthProviders,
+	}
 
 	r.Route("/galleries", func(r chi.Router) {
 		r.Get("/{id}", galleriesC.Show)
@@ -225,6 +240,10 @@ func run(cfg config) error {
 			r.Post("/{id}/images", galleriesC.UplaodImage)
 			r.Post("/{id}/images/{filename}/delete", galleriesC.DeleteImage)
 		})
+	})
+	r.Route("/oauth/{provider}", func(r chi.Router){
+		r.Use(umw.RequireUser)
+		r.Get("/connect", oauthC.Connect)
 	})
 
 	assetsHandler := http.FileServer(http.Dir("assets"))
