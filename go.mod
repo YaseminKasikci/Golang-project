@@ -1,6 +1,8 @@
 module github/yaseminkasikci/lenslocked
 
-go 1.23.0
+go 1.24.0
+
+toolchain go1.24.9
 
 // installer dans la version git precedente
 require github.com/go-chi/chi/v5 v5.2.2 // direct
@@ -15,6 +17,7 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/pressly/goose/v3 v3.24.3
 	golang.org/x/crypto v0.40.0
+	golang.org/x/oauth2 v0.32.0
 )
 
 require (
