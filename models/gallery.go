@@ -171,9 +171,9 @@ func (service *GalleryService) DeleteImage(galleryID int, filename string) error
 	return nil
 }
 
-func (service *GalleryService) CreateImage(galleryID int, filename string, contents io.ReadSeeker) error {
+func (service *GalleryService) CreateImage(galleryID int, filename string, contents io.Reader) error {
 
-	err := checkContentType(contents, service.imageContentTypes())
+	readBytes, err := checkContentType(contents, service.imageContentTypes())
 	if err != nil {
 		return fmt.Errorf("creating image %v: %w", filename, err)
 	}
@@ -196,7 +196,11 @@ func (service *GalleryService) CreateImage(galleryID int, filename string, conte
 	}
 	defer dst.Close()
 
-	_, err = io.Copy(dst, contents)
+	completeFile := io.MultiReader(
+		bytes.NewReader(readBytes),
+		contents,
+	)
+	_, err = io.Copy(dst, completeFile)
 	if err != nil {
 		return fmt.Errorf("copying contents to image: %w", err)
 	}
@@ -214,14 +218,8 @@ func (service *GalleryService) CreateImageViaURL(galleryID int, url string) erro
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("Downloading image: invali status code %d", resp.StatusCode)
 	}
-	imageBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("reading image bytes: %w", err)
-	}
 
-	readSeeker := bytes.NewReader(imageBytes)
-
-	return service.CreateImage(galleryID, filename, readSeeker)
+	return service.CreateImage(galleryID, filename, resp.Body)
 }
 
 func (service *GalleryService) extensions() []string {
