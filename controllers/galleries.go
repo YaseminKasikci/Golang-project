@@ -236,7 +236,6 @@ func (g Galleries) ImageViaURL(w http.ResponseWriter, r *http.Request) {
 	gallery, err := g.galleryByID(w, r, userMustOwnGallery)
 	if err != nil {
 		fmt.Println("-------------%s ------", err.Error())
-
 		return
 	}
 	err = r.ParseForm()
@@ -248,7 +247,11 @@ func (g Galleries) ImageViaURL(w http.ResponseWriter, r *http.Request) {
 
 	files := r.PostForm["files"]
 	for _, file := range files {
-		fmt.Printf("Downloading %s...\n", file)
+		err = g.GalleryService.CreateImageViaURL(gallery.ID, file)
+		if err != nil{
+			http.Error(w, "Someting went wrong with an image: "+file, http.StatusInternalServerError)
+			return
+		}
 	}
 	editPath := fmt.Sprintf("/galleries/%d/edit", gallery.ID)
 	http.Redirect(w, r, editPath, http.StatusFound)
