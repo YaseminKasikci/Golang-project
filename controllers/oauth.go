@@ -59,8 +59,9 @@ func (oa OAuth) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	deleteCookie(w, "oaut_state")
+	deleteCookie(w, "oauth_state")
 	code := r.FormValue("code")
+
 	token, err := config.Exchange(
 		r.Context(),
 		code,
