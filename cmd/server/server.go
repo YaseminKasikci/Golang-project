@@ -238,6 +238,7 @@ func run(cfg config) error {
 			r.Post("/{id}", galleriesC.Update)
 			r.Post("/{id}/delete", galleriesC.Delete)
 			r.Post("/{id}/images", galleriesC.UplaodImage)
+			r.Post("/{id}/images/url", galleriesC.ImageViaURL)
 			r.Post("/{id}/images/{filename}/delete", galleriesC.DeleteImage)
 		})
 	})

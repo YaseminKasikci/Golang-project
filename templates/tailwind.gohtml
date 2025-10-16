@@ -88,6 +88,7 @@ function setupDropbox(){
       for(let i = 0; i < files.length; i++){
         let input = document.createElement("input");
       input.type = "hidden";
+      input.name = "files";
       input.value = files[i].link;
       dbxForm.appendChild(input)
       }
@@ -104,7 +105,7 @@ dbxForm.appendChild(button)
 setupDropbox();
 </script>
 
-<footer class="px-8 py-6 w-full flex justify-between bg-gray-100 border mt-auto ">
+{{/* <footer class="px-8 py-6 w-full flex justify-between bg-gray-100 border mt-auto ">
 
 
   <!-- Bloc description -->
@@ -137,7 +138,7 @@ setupDropbox();
     <a class="text-lg hover:text-blue-100" href="#">RFS</a>
     <a class="text-lg hover:text-blue-100" href="#">Bootstrap</a>
   </div>
-</footer>
+</footer> */}}
 
 </body>
 </html>
