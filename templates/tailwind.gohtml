@@ -68,6 +68,7 @@
 
 {{define "footer"}}
 
+
 <script>
   function closeAlert(event){
     let closeable = event.target.closest(".closeable");
@@ -77,18 +78,30 @@
 </script>
 <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="08hhkllkrylpxst"></script>
 <script>
-let options = {
+function setupDropbox(){
+  let dbxForm = document.getElementById("dropbox-chooser-form");
+  if(dbxForm === null){
+    return;
+  }
+  let options = {
     success: function(files) {
-        alert("Here's the file link: " + files[0].link)
+      for(let i = 0; i < files.length; i++){
+        let input = document.createElement("input");
+      input.type = "hidden";
+      input.value = files[i].link;
+      dbxForm.appendChild(input)
+      }
+      dbxForm.submit();
     },
-    linkType: "preview", 
+    linkType: "direct", 
     multiselect: true, 
     extensions: ['images'],
     folderselect: false,
-    sizeLimit: 1024, // or any positive number
 };
 let button = Dropbox.createChooseButton(options);
-document.body.appendChild(button);
+dbxForm.appendChild(button)
+}
+setupDropbox();
 </script>
 
 <footer class="px-8 py-6 w-full flex justify-between bg-gray-100 border mt-auto ">
