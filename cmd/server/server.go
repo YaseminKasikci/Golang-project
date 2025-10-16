@@ -71,7 +71,7 @@ func loadEnvConfig() (config, error) {
 	dbxConfig := &oauth2.Config{
 		ClientID:     os.Getenv("DROPBOX_APP_ID"),
 		ClientSecret: os.Getenv("DROPBOX_APP_SECRET"),
-		Scopes:       []string{"files.metadata.read", "files.content.read"},
+		Scopes:       []string{"files.metadata.read", "files.content.read", "account_info.read"},
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "https://www.dropbox.com/oauth2/authorize",
 			TokenURL: "https://api.dropboxapi.com/oauth2/token",
@@ -241,7 +241,7 @@ func run(cfg config) error {
 			r.Post("/{id}/images/{filename}/delete", galleriesC.DeleteImage)
 		})
 	})
-	r.Route("/oauth/{provider}", func(r chi.Router){
+	r.Route("/oauth/{provider}", func(r chi.Router) {
 		r.Use(umw.RequireUser)
 		r.Get("/connect", oauthC.Connect)
 		r.Get("/callback", oauthC.Callback)
